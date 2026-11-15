@@ -1,0 +1,5 @@
+node_modules/
+private/
+test/samples/
+.claude/
+.DS_Store

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bank statement PDF to CSV converter that never uploads your file | Statement Sieve</title>
+<meta name="description" content="Convert bank statement PDFs to CSV for Excel, Google Sheets, QuickBooks or Xero. Runs entirely in your browser: your statement is never uploaded. Free preview, one-time unlock.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self'; img-src 'self' data:; connect-src 'self'; form-action 'none'; base-uri 'none'">
+<meta property="og:title" content="Statement Sieve: bank statement PDF to CSV, without uploading it">
+<meta property="og:description" content="Your statement is read on your own device. Nothing is uploaded. Free preview, one-time unlock.">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23123b2e'/%3E%3Cpath d='M8 10h16M8 16h16M8 22h10' stroke='%23d9f26b' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="./"><span class="mark" aria-hidden="true"></span>Statement Sieve</a>
+  <nav>
+    <a href="#how">How it works</a>
+    <a href="#faq">FAQ</a>
+    <button type="button" class="link" id="haveKey">I have a key</button>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <p class="eyebrow">PDF bank statement → CSV</p>
+    <h1>Turn a bank statement into a spreadsheet <em>without uploading it anywhere.</em></h1>
+    <p class="lede">Other converters send your statement to their servers. This one reads the PDF on your own device, in this browser tab. You can switch off your internet connection and it still works.</p>
+
+    <div id="drop" class="drop" tabindex="0" role="button" aria-label="Choose bank statement PDF files">
+      <input id="file" type="file" accept="application/pdf,.pdf" multiple hidden>
+      <p class="drop-title">Drop statement PDFs here</p>
+      <p class="drop-sub">or <span class="fake-link">choose files</span> · <button type="button" class="link" id="trySample">try a sample statement</button></p>
+    </div>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+  </section>
+
+  <section id="results" class="results" hidden>
+    <div class="bar">
+      <div>
+        <h2 id="summary"></h2>
+        <p id="totals" class="muted"></p>
+      </div>
+      <div class="controls">
+        <label>Dates
+          <select id="dateOrder">
+            <option value="auto">Auto-detect</option>
+            <option value="dmy">Day / Month</option>
+            <option value="mdy">Month / Day</option>
+          </select>
+        </label>
+        <button type="button" id="copy" class="btn ghost">Copy for Sheets</button>
+        <button type="button" id="download" class="btn">Download CSV</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Description</th><th class="num">Amount</th><th class="num">Balance</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div id="paywall" class="paywall" hidden>
+      <div>
+        <h3 id="lockedCount"></h3>
+        <p>The free preview covers the first <span class="freeRows"></span> rows. Unlock once and convert every statement in full, forever, in this browser.</p>
+      </div>
+      <div class="pay-actions">
+        <a id="buy" class="btn big" rel="noopener">Unlock everything · <span class="price"></span></a>
+        <p class="muted small">One-time payment. No account, no subscription.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" class="grid3">
+    <article><h3>1. Drop the PDF</h3><p>Statements downloaded from online banking work best. Add several at once and they are combined in date order.</p></article>
+    <article><h3>2. Check the rows</h3><p>Dates, descriptions, amounts and running balances are lined up into columns. Money out is negative, money in is positive.</p></article>
+    <article><h3>3. Export</h3><p>Download a CSV that opens in Excel, Google Sheets and Numbers, and imports into QuickBooks, Xero, FreeAgent and YNAB.</p></article>
+  </section>
+
+  <section class="privacy">
+    <h2>Private by construction, not by promise</h2>
+    <p>This page is a set of static files. There is no server to send your statement to, no analytics and no cookies. The page's own security policy blocks it from contacting any other site, and you can check that yourself in your browser's network panel, or simply go offline before you drop the file.</p>
+  </section>
+
+  <section id="faq" class="faq">
+    <h2>Questions</h2>
+    <details><summary>Which banks does it work with?</summary><p>It does not rely on per-bank templates. It looks for the pattern every statement shares: a date, a description and one or more amount columns. That covers most statements from major banks and card providers. The preview is free, so you can see whether yours converts cleanly before paying.</p></details>
+    <details><summary>Does it work with scanned or photographed statements?</summary><p>No. The PDF needs real text in it, which is what you get when you download a statement from online banking. A scan is a picture of text, and reading that needs OCR, which this tool does not do.</p></details>
+    <details><summary>What do I get when I pay?</summary><p>An unlock key. Enter it once and this browser converts unlimited statements in full. Keep the key: you can enter it again on another device or after clearing your browser data.</p></details>
+    <details><summary>What if it gets my statement wrong?</summary><p>Try the free preview first: the first rows show exactly how your statement will convert. If you paid and it does not work for your bank, ask for a refund.<span id="supportLine"></span></p></details>
+    <details><summary>Should I double-check the output?</summary><p>Yes. Compare the last balance and the row count with your statement before relying on the file for tax or accounting. Layouts vary, and a tool that reads documents automatically can misread an unusual one.</p></details>
+  </section>
+</main>
+
+<footer>
+  <p>Statement Sieve · runs on your device · PDF reading by the open-source <a href="vendor/PDFJS-LICENSE">pdf.js</a></p>
+</footer>
+
+<dialog id="keyDialog">
+  <form method="dialog" id="keyForm">
+    <h3>Enter your unlock key</h3>
+    <input id="keyInput" type="text" autocomplete="off" spellcheck="false" placeholder="SIEVE-XXXXXX-XXXXXX-XXXXXX-XXXXXX" aria-label="Unlock key">
+    <p id="keyMsg" class="muted small" role="status"></p>
+    <div class="dialog-actions">
+      <button type="button" class="btn ghost" id="keyCancel">Cancel</button>
+      <button type="submit" class="btn">Unlock</button>
+    </div>
+  </form>
+</dialog>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

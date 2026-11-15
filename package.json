@@ -1,0 +1,13 @@
+{
+  "name": "statement-sieve",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node test/make-samples.mjs && node test/run.mjs",
+    "serve": "npx --yes serve site -l 4173"
+  },
+  "devDependencies": {
+    "pdfjs-dist": "^6.5.438",
+    "pdfkit": "^0.20.2"
+  }
+}
